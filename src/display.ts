@@ -2,11 +2,12 @@ import type { WorkSchedule } from './schedule';
 import { getTimeRemaining, isWorkDayToday } from './time-calculator';
 import { drawFestiveCanvas } from './canvas-drawing';
 import { getLanguageStrings } from './languages';
+import { getElementById } from './dom-utils';
 
 export function updateDisplay(schedule: WorkSchedule): void {
-  const displayElement = document.getElementById('main-display');
-  const canvasElement = document.getElementById('festive-canvas') as HTMLCanvasElement | null;
-  const contextTextElement = document.getElementById('context-text');
+  const displayElement = getElementById<HTMLDivElement>('main-display');
+  const canvasElement = getElementById<HTMLCanvasElement>('festive-canvas');
+  const contextTextElement = getElementById<HTMLDivElement>('context-text');
   
   if (!displayElement) return;
 
@@ -61,7 +62,17 @@ export function updateDisplay(schedule: WorkSchedule): void {
             const minuteLabel = timeRemaining.minutes === 1 ? strings.minute : strings.minutes;
             parts.push(`${timeRemaining.minutes} ${minuteLabel}`);
           }
-          displayElement.innerHTML = parts.join('<br>');
+          // Use DOM manipulation instead of innerHTML for security
+          displayElement.textContent = '';
+          parts.forEach((part, index) => {
+            if (index > 0) {
+              const br = document.createElement('br');
+              displayElement.appendChild(br);
+            }
+            const span = document.createElement('span');
+            span.textContent = part;
+            displayElement.appendChild(span);
+          });
         }
       }
     }

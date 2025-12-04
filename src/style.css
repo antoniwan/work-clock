@@ -75,6 +75,38 @@
   box-sizing: border-box;
 }
 
+/* Skip link for accessibility */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #1a1a1a;
+  color: #ffffff;
+  padding: 8px 16px;
+  text-decoration: none;
+  z-index: 100;
+  border-radius: 0 0 4px 0;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid #0066cc;
+  outline-offset: 2px;
+}
+
+/* Screen reader only class */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -146,6 +178,16 @@ body {
   z-index: 10;
   opacity: 0.7;
   font-family: inherit;
+  transition: opacity 0.2s, outline 0.2s;
+  border-radius: 4px;
+}
+
+#toggle-language:focus,
+#toggle-theme:focus,
+#toggle-config:focus {
+  opacity: 1;
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
 }
 
 #toggle-language {
@@ -182,6 +224,11 @@ body {
   font-family: inherit;
 }
 
+#config-form:focus {
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
+}
+
 #config-form.hidden {
   display: none;
 }
@@ -205,6 +252,23 @@ body {
   font-weight: 500;
 }
 
+fieldset {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  padding: 1rem;
+  margin: 0 0 1.5rem 0;
+}
+
+.dark-mode fieldset {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+legend {
+  color: inherit;
+  font-weight: 500;
+  padding: 0 0.5rem;
+}
+
 .days-container {
   display: flex;
   flex-wrap: wrap;
@@ -222,6 +286,13 @@ body {
   width: 20px;
   height: 20px;
   cursor: pointer;
+  transition: outline 0.2s;
+}
+
+.days-container input[type="checkbox"]:focus {
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 input[type="time"] {
@@ -245,6 +316,13 @@ input[type="time"]:focus {
   width: 20px;
   height: 20px;
   cursor: pointer;
+  transition: outline 0.2s;
+}
+
+#emoji-mode:focus {
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 #save-config {
@@ -259,10 +337,17 @@ input[type="time"]:focus {
   cursor: pointer;
   font-family: inherit;
   opacity: 0.8;
+  transition: opacity 0.2s, outline 0.2s;
 }
 
 #save-config:hover {
   opacity: 1;
+}
+
+#save-config:focus {
+  opacity: 1;
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
 }
 
 #save-config.saved {

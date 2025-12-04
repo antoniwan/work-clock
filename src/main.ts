@@ -10,27 +10,36 @@ import {
   getNextLanguage,
   languages,
 } from './languages';
+import {
+  getElementById,
+  updateTextContent,
+  updateTitle,
+  applyTheme,
+  getCurrentTheme,
+} from './dom-utils';
 
 let schedule: WorkSchedule = getSchedule();
 let updateTimeoutId: number | null = null;
 
 function updateThemeIcon(): void {
-  const themeToggle = document.getElementById('toggle-theme');
+  const themeToggle = getElementById<HTMLButtonElement>('toggle-theme');
   if (!themeToggle) return;
   
   const strings = getLanguageStrings();
-  const isDark = document.documentElement.classList.contains('dark-mode');
-  const isLight = document.documentElement.classList.contains('light-mode');
+  const currentTheme = getCurrentTheme();
   
-  if (isDark) {
+  if (currentTheme === 'dark') {
     themeToggle.textContent = '🌙';
-    themeToggle.title = strings.themeDarkTitle;
-  } else if (isLight) {
+    themeToggle.setAttribute('aria-label', strings.themeDarkTitle);
+    updateTitle('toggle-theme', strings.themeDarkTitle);
+  } else if (currentTheme === 'light') {
     themeToggle.textContent = '☀️';
-    themeToggle.title = strings.themeLightTitle;
+    themeToggle.setAttribute('aria-label', strings.themeLightTitle);
+    updateTitle('toggle-theme', strings.themeLightTitle);
   } else {
     themeToggle.textContent = '🌓';
-    themeToggle.title = strings.themeSystemTitle;
+    themeToggle.setAttribute('aria-label', strings.themeSystemTitle);
+    updateTitle('toggle-theme', strings.themeSystemTitle);
   }
 }
 
@@ -42,56 +51,36 @@ function updateAllUIText(): void {
   document.documentElement.lang = currentLang;
   
   // Update language toggle button
-  const languageToggle = document.getElementById('toggle-language');
+  const languageToggle = getElementById<HTMLButtonElement>('toggle-language');
   if (languageToggle) {
     languageToggle.textContent = languages[currentLang].flag;
-    languageToggle.title = `${languages[currentLang].name} (click to change)`;
+    const label = `${languages[currentLang].name} (click to change)`;
+    languageToggle.setAttribute('aria-label', label);
+    updateTitle('toggle-language', label);
   }
   
   // Update config toggle button
-  const configToggle = document.getElementById('toggle-config');
+  updateTitle('toggle-config', strings.settingsTitle);
+  const configToggle = getElementById<HTMLButtonElement>('toggle-config');
   if (configToggle) {
-    configToggle.title = strings.settingsTitle;
+    configToggle.setAttribute('aria-label', strings.settingsTitle);
   }
   
-  // Update config form
-  const workScheduleTitle = document.getElementById('work-schedule-title');
-  if (workScheduleTitle) {
-    workScheduleTitle.textContent = strings.workSchedule;
-  }
-  
-  const workDaysLabel = document.getElementById('work-days-label');
-  if (workDaysLabel) {
-    workDaysLabel.textContent = strings.workDays;
-  }
+  // Update config form labels
+  updateTextContent('work-schedule-title', strings.workSchedule);
+  updateTextContent('work-days-label', strings.workDays);
+  updateTextContent('start-time-label', strings.startTime);
+  updateTextContent('end-time-label', strings.endTime);
+  updateTextContent('emoji-mode-label', strings.emojiMode);
+  updateTextContent('save-config', strings.save);
   
   // Update day names
   strings.days.forEach((dayName, index) => {
-    const daySpan = document.querySelector(`span[data-day-name="${index}"]`);
+    const daySpan = document.querySelector<HTMLSpanElement>(`span[data-day-name="${index}"]`);
     if (daySpan) {
       daySpan.textContent = dayName;
     }
   });
-  
-  const startTimeLabel = document.getElementById('start-time-label');
-  if (startTimeLabel) {
-    startTimeLabel.textContent = strings.startTime;
-  }
-  
-  const endTimeLabel = document.getElementById('end-time-label');
-  if (endTimeLabel) {
-    endTimeLabel.textContent = strings.endTime;
-  }
-  
-  const emojiModeLabel = document.getElementById('emoji-mode-label');
-  if (emojiModeLabel) {
-    emojiModeLabel.textContent = strings.emojiMode;
-  }
-  
-  const saveButton = document.getElementById('save-config');
-  if (saveButton) {
-    saveButton.textContent = strings.save;
-  }
   
   // Update theme icon titles
   updateThemeIcon();
@@ -101,7 +90,7 @@ function updateAllUIText(): void {
 }
 
 function initializeLanguage(): void {
-  const languageToggle = document.getElementById('toggle-language');
+  const languageToggle = getElementById<HTMLButtonElement>('toggle-language');
   if (!languageToggle) return;
   
   // Set initial language
@@ -113,81 +102,144 @@ function initializeLanguage(): void {
     setCurrentLanguage(nextLang);
     updateAllUIText();
   });
+  
+  // Keyboard shortcut: L for language toggle
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'l' && !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey) {
+      const activeElement = document.activeElement;
+      // Only trigger if not typing in an input
+      if (activeElement?.tagName !== 'INPUT' && activeElement?.tagName !== 'TEXTAREA') {
+        languageToggle.click();
+      }
+    }
+  });
+  
+  // Keyboard shortcut: S for settings
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 's' && !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey) {
+      const activeElement = document.activeElement;
+      const configForm = getElementById<HTMLDivElement>('config-form');
+      // Only trigger if not typing in an input and modal is not open
+      if (
+        activeElement?.tagName !== 'INPUT' &&
+        activeElement?.tagName !== 'TEXTAREA' &&
+        configForm?.classList.contains('hidden')
+      ) {
+        const toggleButton = getElementById<HTMLButtonElement>('toggle-config');
+        toggleButton?.click();
+      }
+    }
+  });
 }
 
 function initializeTheme(): void {
-  const themeToggle = document.getElementById('toggle-theme');
+  const themeToggle = getElementById<HTMLButtonElement>('toggle-theme');
   if (!themeToggle) return;
 
   // Initialize theme from stored preference or system preference
   const storedTheme = schedule.darkMode;
   if (storedTheme === true) {
-    document.documentElement.classList.add('dark-mode');
+    applyTheme('dark');
   } else if (storedTheme === false) {
-    document.documentElement.classList.add('light-mode');
+    applyTheme('light');
   } else {
-    // Use system preference
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (prefersDark) {
-      document.documentElement.classList.add('dark-mode');
-    }
+    applyTheme('system');
   }
 
   // Update icon based on initial state
   updateThemeIcon();
 
   // Listen for system theme changes (only if using system preference)
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
     if (schedule.darkMode === undefined) {
-      document.documentElement.classList.remove('dark-mode', 'light-mode');
-      if (e.matches) {
-        document.documentElement.classList.add('dark-mode');
-      }
+      applyTheme('system');
       updateThemeIcon();
     }
   });
 
   // Toggle theme on button click
   themeToggle.addEventListener('click', () => {
-    const isDark = document.documentElement.classList.contains('dark-mode');
-    const isLight = document.documentElement.classList.contains('light-mode');
+    const currentTheme = getCurrentTheme();
     
-    document.documentElement.classList.remove('dark-mode', 'light-mode');
-    
-    if (isDark) {
+    if (currentTheme === 'dark') {
       // Switch to light mode
-      document.documentElement.classList.add('light-mode');
+      applyTheme('light');
       schedule.darkMode = false;
-    } else if (isLight) {
+    } else if (currentTheme === 'light') {
       // Switch to system preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (prefersDark) {
-        document.documentElement.classList.add('dark-mode');
-      }
+      applyTheme('system');
       schedule.darkMode = undefined;
     } else {
       // Currently using system, switch to dark
-      document.documentElement.classList.add('dark-mode');
+      applyTheme('dark');
       schedule.darkMode = true;
     }
     
     saveSchedule(schedule);
     updateThemeIcon();
   });
+  
+  // Keyboard shortcut: T for theme toggle
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 't' && !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey) {
+      const activeElement = document.activeElement;
+      // Only trigger if not typing in an input
+      if (activeElement?.tagName !== 'INPUT' && activeElement?.tagName !== 'TEXTAREA') {
+        themeToggle.click();
+      }
+    }
+  });
+}
+
+function trapFocus(element: HTMLElement): void {
+  const focusableElements = element.querySelectorAll<HTMLElement>(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+
+  element.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab') return;
+
+    if (e.shiftKey) {
+      // Shift + Tab
+      if (document.activeElement === firstElement) {
+        e.preventDefault();
+        lastElement?.focus();
+      }
+    } else {
+      // Tab
+      if (document.activeElement === lastElement) {
+        e.preventDefault();
+        firstElement?.focus();
+      }
+    }
+  });
 }
 
 function initializeConfigForm(): void {
-  const toggleButton = document.getElementById('toggle-config');
-  const configForm = document.getElementById('config-form');
-  const saveButton = document.getElementById('save-config');
+  const toggleButton = getElementById<HTMLButtonElement>('toggle-config');
+  const configForm = getElementById<HTMLDivElement>('config-form');
+  const saveButton = getElementById<HTMLButtonElement>('save-config');
   
   if (!toggleButton || !configForm || !saveButton) return;
 
+  // Set up focus trapping
+  trapFocus(configForm);
+
   // Toggle form visibility
   toggleButton.addEventListener('click', () => {
-    configForm.classList.toggle('hidden');
-    if (!configForm.classList.contains('hidden')) {
+    const isHidden = configForm.classList.toggle('hidden');
+    toggleButton.setAttribute('aria-expanded', String(!isHidden));
+    
+    if (!isHidden) {
       populateConfigForm();
+      // Focus first input when opening
+      const firstInput = getElementById<HTMLInputElement>('start-time');
+      firstInput?.focus();
+    } else {
+      // Return focus to toggle button when closing
+      toggleButton.focus();
     }
   });
 
@@ -203,19 +255,30 @@ function initializeConfigForm(): void {
       
       // Show feedback
       const strings = getLanguageStrings();
-      const originalText = saveButton.textContent;
-      saveButton.textContent = strings.saved;
+      const originalText = saveButton.textContent || '';
+      updateTextContent('save-config', strings.saved);
       saveButton.classList.add('saved');
       
       // Hide form and update display
       configForm.classList.add('hidden');
+      toggleButton.setAttribute('aria-expanded', 'false');
+      toggleButton.focus();
       updateDisplay(schedule);
       
       // Reset button after delay
       setTimeout(() => {
-        saveButton.textContent = originalText;
+        updateTextContent('save-config', originalText);
         saveButton.classList.remove('saved');
       }, 1500);
+    }
+  });
+  
+  // Close modal on Escape key
+  configForm.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !configForm.classList.contains('hidden')) {
+      configForm.classList.add('hidden');
+      toggleButton.setAttribute('aria-expanded', 'false');
+      toggleButton.focus();
     }
   });
 }
@@ -230,13 +293,13 @@ function populateConfigForm(): void {
   });
 
   // Set times
-  const startTimeInput = document.getElementById('start-time') as HTMLInputElement;
-  const endTimeInput = document.getElementById('end-time') as HTMLInputElement;
+  const startTimeInput = getElementById<HTMLInputElement>('start-time');
+  const endTimeInput = getElementById<HTMLInputElement>('end-time');
   if (startTimeInput) startTimeInput.value = schedule.startTime;
   if (endTimeInput) endTimeInput.value = schedule.endTime;
 
   // Set emoji mode
-  const emojiModeCheckbox = document.getElementById('emoji-mode') as HTMLInputElement;
+  const emojiModeCheckbox = getElementById<HTMLInputElement>('emoji-mode');
   if (emojiModeCheckbox) {
     emojiModeCheckbox.checked = schedule.emojiMode ?? false;
   }
@@ -249,9 +312,9 @@ function readConfigForm(): WorkSchedule | null {
     days.push(checkbox?.checked ?? false);
   }
 
-  const startTimeInput = document.getElementById('start-time') as HTMLInputElement;
-  const endTimeInput = document.getElementById('end-time') as HTMLInputElement;
-  const emojiModeCheckbox = document.getElementById('emoji-mode') as HTMLInputElement;
+  const startTimeInput = getElementById<HTMLInputElement>('start-time');
+  const endTimeInput = getElementById<HTMLInputElement>('end-time');
+  const emojiModeCheckbox = getElementById<HTMLInputElement>('emoji-mode');
 
   if (!startTimeInput || !endTimeInput) return null;
 
@@ -278,7 +341,7 @@ function scheduleNextUpdate(): void {
 
 // Handle canvas resize
 function setupCanvasResize(): void {
-  const canvasElement = document.getElementById('festive-canvas') as HTMLCanvasElement | null;
+  const canvasElement = getElementById<HTMLCanvasElement>('festive-canvas');
   if (!canvasElement) return;
 
   const resizeHandler = () => {

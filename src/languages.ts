@@ -1,4 +1,4 @@
-export type LanguageCode = 'en-US' | 'es-PR';
+export type LanguageCode = 'en-US' | 'es-PR' | 'fr-FR' | 'pt-BR';
 
 export interface Language {
   code: LanguageCode;
@@ -87,6 +87,58 @@ export const languages: Record<LanguageCode, Language> = {
       contextText: 'Tiempo hasta que salgamos...',
     },
   },
+  'fr-FR': {
+    code: 'fr-FR',
+    flag: '🇫🇷',
+    name: 'Français (France)',
+    strings: {
+      themeDarkTitle: 'Mode sombre (cliquer pour clair)',
+      themeLightTitle: 'Mode clair (cliquer pour système)',
+      themeSystemTitle: 'Thème système (cliquer pour sombre)',
+      settingsTitle: 'Paramètres',
+      workSchedule: 'Horaires de Travail',
+      workDays: 'Jours de Travail:',
+      startTime: 'Heure de Début:',
+      endTime: 'Heure de Fin:',
+      emojiMode: 'Mode Emoji',
+      save: 'Enregistrer',
+      saved: 'Enregistré!',
+      days: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+      noWorkToday: 'PAS DE TRAVAIL AUJOURD\'HUI!',
+      workDone: 'TRAVAIL TERMINÉ!',
+      hour: 'heure',
+      hours: 'heures',
+      minute: 'minute',
+      minutes: 'minutes',
+      contextText: 'Temps jusqu\'à ce qu\'on parte...',
+    },
+  },
+  'pt-BR': {
+    code: 'pt-BR',
+    flag: '🇧🇷',
+    name: 'Português (Brasil)',
+    strings: {
+      themeDarkTitle: 'Modo escuro (clique para claro)',
+      themeLightTitle: 'Modo claro (clique para sistema)',
+      themeSystemTitle: 'Tema do sistema (clique para escuro)',
+      settingsTitle: 'Configurações',
+      workSchedule: 'Horário de Trabalho',
+      workDays: 'Dias de Trabalho:',
+      startTime: 'Hora de Início:',
+      endTime: 'Hora de Término:',
+      emojiMode: 'Modo Emoji',
+      save: 'Salvar',
+      saved: 'Salvo!',
+      days: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+      noWorkToday: 'SEM TRABALHO HOJE!',
+      workDone: 'TRABALHO CONCLUÍDO!',
+      hour: 'hora',
+      hours: 'horas',
+      minute: 'minuto',
+      minutes: 'minutos',
+      contextText: 'Tempo até sairmos...',
+    },
+  },
 };
 
 const STORAGE_KEY = 'work-clock-language';
@@ -94,7 +146,7 @@ const DEFAULT_LANGUAGE: LanguageCode = 'en-US';
 
 export function getCurrentLanguage(): LanguageCode {
   const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored && (stored === 'en-US' || stored === 'es-PR')) {
+  if (stored && (stored === 'en-US' || stored === 'es-PR' || stored === 'fr-FR' || stored === 'pt-BR')) {
     return stored as LanguageCode;
   }
   return DEFAULT_LANGUAGE;

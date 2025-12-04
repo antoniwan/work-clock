@@ -4,55 +4,118 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Primary Meta Tags -->
+    <title>Work Clock - Time Remaining Until Work Ends</title>
+    <meta name="title" content="Work Clock - Time Remaining Until Work Ends" />
+    <meta name="description" content="A simple web application that displays the time remaining until your work day ends. Perfect for quick glances to see how much work time is left in your day." />
+    <meta name="keywords" content="work clock, countdown timer, work schedule, time tracker, productivity, work hours" />
+    <meta name="author" content="Work Clock" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://work-clock.app/" />
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://work-clock.app/" />
+    <meta property="og:title" content="Work Clock - Time Remaining Until Work Ends" />
+    <meta property="og:description" content="A simple web application that displays the time remaining until your work day ends. Perfect for quick glances to see how much work time is left in your day." />
+    <meta property="og:image" content="https://work-clock.app/og-image.png" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://work-clock.app/" />
+    <meta property="twitter:title" content="Work Clock - Time Remaining Until Work Ends" />
+    <meta property="twitter:description" content="A simple web application that displays the time remaining until your work day ends. Perfect for quick glances to see how much work time is left in your day." />
+    <meta property="twitter:image" content="https://work-clock.app/og-image.png" />
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    
+    <!-- Fonts with display swap for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <title>work-clock</title>
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Work Clock",
+      "description": "A simple web application that displays the time remaining until your work day ends. Perfect for quick glances to see how much work time is left in your day.",
+      "url": "https://work-clock.app/",
+      "applicationCategory": "ProductivityApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Countdown Timer",
+        "Flexible Schedule Configuration",
+        "Custom Work Hours",
+        "Multi-language Support",
+        "Dark/Light Theme",
+        "Emoji Mode"
+      ]
+    }
+    </script>
   </head>
   <body>
+    <a href="#main-display" class="skip-link">Skip to main content</a>
     <div id="app">
-      <div id="main-display"></div>
-      <canvas id="festive-canvas"></canvas>
-      <div id="context-text"></div>
+      <div id="main-display" role="timer" aria-live="polite" aria-atomic="true" aria-label="Time remaining until work ends"></div>
+      <canvas id="festive-canvas" aria-hidden="true"></canvas>
+      <div id="context-text" aria-live="polite" aria-atomic="true"></div>
       
-      <button id="toggle-language" type="button" title="Change language">🇺🇸</button>
-      <button id="toggle-theme" type="button" title="Toggle dark/light mode">🌓</button>
-      <button id="toggle-config" type="button" title="Settings">⚙️</button>
+      <nav aria-label="Application controls">
+        <button id="toggle-language" type="button" aria-label="Change language" aria-pressed="false">🇺🇸</button>
+        <button id="toggle-theme" type="button" aria-label="Toggle theme" aria-pressed="false">🌓</button>
+        <button id="toggle-config" type="button" aria-label="Open settings" aria-expanded="false" aria-controls="config-form">⚙️</button>
+      </nav>
       
-      <div id="config-form" class="hidden">
+      <div id="config-form" class="hidden" role="dialog" aria-modal="true" aria-labelledby="work-schedule-title" aria-describedby="config-form-description">
+        <div id="config-form-description" class="sr-only">Configure your work schedule including days, start time, end time, and display preferences</div>
         <h2 id="work-schedule-title">Work Schedule</h2>
         
-        <div class="form-group">
-          <label id="work-days-label">Work Days:</label>
-          <div class="days-container">
-            <label><input type="checkbox" data-day="0" /> <span data-day-name="0">Mon</span></label>
-            <label><input type="checkbox" data-day="1" /> <span data-day-name="1">Tue</span></label>
-            <label><input type="checkbox" data-day="2" /> <span data-day-name="2">Wed</span></label>
-            <label><input type="checkbox" data-day="3" /> <span data-day-name="3">Thu</span></label>
-            <label><input type="checkbox" data-day="4" /> <span data-day-name="4">Fri</span></label>
-            <label><input type="checkbox" data-day="5" /> <span data-day-name="5">Sat</span></label>
-            <label><input type="checkbox" data-day="6" /> <span data-day-name="6">Sun</span></label>
+        <form id="schedule-form" onsubmit="return false;">
+          <fieldset>
+            <legend id="work-days-label">Work Days:</legend>
+            <div class="days-container" role="group" aria-labelledby="work-days-label">
+              <label><input type="checkbox" data-day="0" aria-label="Monday" /> <span data-day-name="0">Mon</span></label>
+              <label><input type="checkbox" data-day="1" aria-label="Tuesday" /> <span data-day-name="1">Tue</span></label>
+              <label><input type="checkbox" data-day="2" aria-label="Wednesday" /> <span data-day-name="2">Wed</span></label>
+              <label><input type="checkbox" data-day="3" aria-label="Thursday" /> <span data-day-name="3">Thu</span></label>
+              <label><input type="checkbox" data-day="4" aria-label="Friday" /> <span data-day-name="4">Fri</span></label>
+              <label><input type="checkbox" data-day="5" aria-label="Saturday" /> <span data-day-name="5">Sat</span></label>
+              <label><input type="checkbox" data-day="6" aria-label="Sunday" /> <span data-day-name="6">Sun</span></label>
+            </div>
+          </fieldset>
+          
+          <div class="form-group">
+            <label for="start-time" id="start-time-label">Start Time:</label>
+            <input type="time" id="start-time" required aria-required="true" aria-describedby="start-time-label" />
           </div>
-        </div>
-        
-        <div class="form-group">
-          <label for="start-time" id="start-time-label">Start Time:</label>
-          <input type="time" id="start-time" required />
-        </div>
-        
-        <div class="form-group">
-          <label for="end-time" id="end-time-label">End Time:</label>
-          <input type="time" id="end-time" required />
-        </div>
-        
-        <div class="form-group">
-          <label>
-            <input type="checkbox" id="emoji-mode" />
-            <span id="emoji-mode-label">Emoji Mode</span>
-          </label>
-        </div>
-        
-        <button type="button" id="save-config">Save</button>
+          
+          <div class="form-group">
+            <label for="end-time" id="end-time-label">End Time:</label>
+            <input type="time" id="end-time" required aria-required="true" aria-describedby="end-time-label" />
+          </div>
+          
+          <div class="form-group">
+            <label for="emoji-mode">
+              <input type="checkbox" id="emoji-mode" aria-describedby="emoji-mode-label" />
+              <span id="emoji-mode-label">Emoji Mode</span>
+            </label>
+          </div>
+          
+          <button type="button" id="save-config" aria-label="Save schedule configuration">Save</button>
+        </form>
       </div>
     </div>
     <script type="module" src="/src/main.ts"></script>

@@ -72,18 +72,53 @@ Three toggle buttons are available in the top-right corner:
 
 The display updates automatically every minute. All settings (schedule, language, theme) are saved automatically.
 
-## Project Structure
+## Adding Your Own Language
 
-```
-src/
-├── main.ts           # App initialization and event handlers
-├── display.ts        # Display update logic
-├── schedule.ts       # Schedule data and localStorage management
-├── time-calculator.ts # Time calculation utilities
-├── languages.ts      # Language localization system
-├── canvas-drawing.ts # Festive animation canvas
-└── style.css         # Styling with dark/light mode support
-```
+The app uses a simple language object system in `src/languages.ts`. To add a new language:
+
+1. **Add your language code** to the `LanguageCode` type:
+   ```typescript
+   export type LanguageCode = 'en-US' | 'es-PR' | 'your-code';
+   ```
+
+2. **Add your language object** to the `languages` record with all required strings:
+   ```typescript
+   'your-code': {
+     code: 'your-code',
+     flag: '🏳️',  // Your flag emoji
+     name: 'Your Language Name',
+     strings: {
+       themeDarkTitle: '...',
+       themeLightTitle: '...',
+       themeSystemTitle: '...',
+       settingsTitle: '...',
+       workSchedule: '...',
+       workDays: '...',
+       startTime: '...',
+       endTime: '...',
+       emojiMode: '...',
+       save: '...',
+       days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], // Your day abbreviations
+       noWorkToday: '...',
+       workDone: '...',
+       hour: '...',
+       hours: '...',
+       minute: '...',
+       minutes: '...',
+     },
+   },
+   ```
+
+3. **Update the validation** in `getCurrentLanguage()` to include your new code:
+   ```typescript
+   if (stored && (stored === 'en-US' || stored === 'es-PR' || stored === 'your-code')) {
+   ```
+
+That's it! The language toggle will automatically include your new language in the cycle.
+
+## Architecture
+
+The app is built with a modular TypeScript structure. The core logic is separated into focused modules: `main.ts` handles initialization and UI interactions, `display.ts` manages the countdown display, `schedule.ts` handles data persistence, and `time-calculator.ts` performs time calculations. The language system in `languages.ts` uses simple objects (no external files), making it easy to add new languages. Styling supports system-aware dark/light modes, and the festive canvas animation uses the Canvas API for visual feedback when work is complete.
 
 ## Technology
 

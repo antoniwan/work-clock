@@ -18,6 +18,7 @@ export interface Language {
     endTime: string;
     emojiMode: string;
     save: string;
+    saved: string;
     
     // Day names (abbreviated)
     days: [string, string, string, string, string, string, string]; // Mon-Sun
@@ -49,6 +50,7 @@ export const languages: Record<LanguageCode, Language> = {
       endTime: 'End Time:',
       emojiMode: 'Emoji Mode',
       save: 'Save',
+      saved: 'Saved!',
       days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       noWorkToday: 'NO WORK TODAY!',
       workDone: 'WORK DONE!',
@@ -74,6 +76,7 @@ export const languages: Record<LanguageCode, Language> = {
       endTime: 'Hora de Finalización:',
       emojiMode: 'Modo Emoji',
       save: 'Guardar',
+      saved: '¡Guardado!',
       days: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
       noWorkToday: '¡NO HAY TRABAJO HOY!',
       workDone: '¡TRABAJO COMPLETADO!',

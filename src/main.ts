@@ -200,8 +200,22 @@ function initializeConfigForm(): void {
     if (newSchedule) {
       schedule = newSchedule;
       saveSchedule(schedule);
+      
+      // Show feedback
+      const strings = getLanguageStrings();
+      const originalText = saveButton.textContent;
+      saveButton.textContent = strings.saved;
+      saveButton.classList.add('saved');
+      
+      // Hide form and update display
       configForm.classList.add('hidden');
       updateDisplay(schedule);
+      
+      // Reset button after delay
+      setTimeout(() => {
+        saveButton.textContent = originalText;
+        saveButton.classList.remove('saved');
+      }, 1500);
     }
   });
 }

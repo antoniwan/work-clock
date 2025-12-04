@@ -6,12 +6,24 @@ import { getLanguageStrings } from './languages';
 export function updateDisplay(schedule: WorkSchedule): void {
   const displayElement = document.getElementById('main-display');
   const canvasElement = document.getElementById('festive-canvas') as HTMLCanvasElement | null;
+  const contextTextElement = document.getElementById('context-text');
   
   if (!displayElement) return;
 
   const isWorkDay = isWorkDayToday(schedule);
   const timeRemaining = getTimeRemaining(schedule);
   const strings = getLanguageStrings();
+  
+  // Update context text
+  if (contextTextElement) {
+    const isWorkDone = timeRemaining && timeRemaining.hours === 0 && timeRemaining.minutes === 0;
+    if (!isWorkDay || isWorkDone) {
+      contextTextElement.style.display = 'none';
+    } else {
+      contextTextElement.textContent = strings.contextText;
+      contextTextElement.style.display = 'block';
+    }
+  }
 
   // Show/hide canvas
   if (canvasElement) {
@@ -39,7 +51,7 @@ export function updateDisplay(schedule: WorkSchedule): void {
           // Emoji mode: show busy emoji when working
           displayElement.textContent = '💼';
         } else {
-          // Default mode: show "X hours Y minutes" format
+          // Default mode: show "X hours Y minutes" format with line breaks
           const parts: string[] = [];
           if (timeRemaining.hours > 0) {
             const hourLabel = timeRemaining.hours === 1 ? strings.hour : strings.hours;
@@ -49,7 +61,7 @@ export function updateDisplay(schedule: WorkSchedule): void {
             const minuteLabel = timeRemaining.minutes === 1 ? strings.minute : strings.minutes;
             parts.push(`${timeRemaining.minutes} ${minuteLabel}`);
           }
-          displayElement.textContent = parts.join(' ');
+          displayElement.innerHTML = parts.join('<br>');
         }
       }
     }

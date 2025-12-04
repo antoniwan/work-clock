@@ -139,15 +139,16 @@ body {
 }
 
 #main-display {
-  font-size: clamp(2.5rem, 8vw, 8rem);
+  font-size: clamp(3rem, 15vw, 20rem);
   font-weight: 400;
   text-align: center;
   z-index: 2;
   color: inherit;
   user-select: none;
   letter-spacing: -0.02em;
-  max-width: 90vw;
-  padding: 2rem;
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 #festive-canvas {
@@ -160,17 +161,30 @@ body {
   display: none;
 }
 
+#context-text {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  font-size: 0.875rem;
+  color: inherit;
+  opacity: 0.6;
+  z-index: 5;
+  user-select: none;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+
 #toggle-language,
 #toggle-theme,
 #toggle-config {
   position: fixed;
-  top: 20px;
+  top: 1rem;
   background: rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(0, 0, 0, 0.1);
   color: inherit;
   font-size: 1.5rem;
-  padding: 10px 15px;
-  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
   cursor: pointer;
   z-index: 10;
   transition: background 0.2s, border-color 0.2s;
@@ -178,15 +192,15 @@ body {
 }
 
 #toggle-language {
-  right: 170px;
+  right: 10rem;
 }
 
 #toggle-theme {
-  right: 95px;
+  right: 5.5rem;
 }
 
 #toggle-config {
-  right: 20px;
+  right: 1rem;
 }
 
 #toggle-theme:hover,
@@ -298,46 +312,34 @@ input[type="time"]:focus {
   background: #000000;
 }
 
-/* Responsive sizing - comfortable on all screens */
-@media (min-width: 1200px) {
+@media (max-width: 768px) {
   #main-display {
-    font-size: 8rem;
-  }
-}
-
-@media (min-width: 768px) and (max-width: 1199px) {
-  #main-display {
-    font-size: 6rem;
-  }
-}
-
-@media (max-width: 767px) {
-  #main-display {
-    font-size: clamp(2rem, 10vw, 4rem);
-    padding: 1.5rem;
+    font-size: clamp(2.5rem, 18vw, 12rem);
+    padding: 0.5rem;
   }
   
-  #config-form {
-    padding: 1.5rem;
+  #toggle-language {
+    right: 8rem;
+  }
+  
+  #toggle-theme {
+    right: 4.5rem;
+  }
+  
+  #toggle-config {
+    right: 0.5rem;
   }
   
   #toggle-language,
   #toggle-theme,
   #toggle-config {
-    top: 10px;
-    padding: 8px 12px;
     font-size: 1.25rem;
+    padding: 0.4rem 0.6rem;
   }
   
-  #toggle-language {
-    right: 150px;
-  }
-  
-  #toggle-theme {
-    right: 75px;
-  }
-  
-  #toggle-config {
-    right: 10px;
+  #context-text {
+    font-size: 0.75rem;
+    bottom: 0.75rem;
+    left: 0.75rem;
   }
 }

@@ -29,6 +29,7 @@ export interface Language {
     hours: string;
     minute: string;
     minutes: string;
+    contextText: string;
   };
 }
 
@@ -55,6 +56,7 @@ export const languages: Record<LanguageCode, Language> = {
       hours: 'hours',
       minute: 'minute',
       minutes: 'minutes',
+      contextText: 'Time until we are off...',
     },
   },
   'es-PR': {
@@ -79,6 +81,7 @@ export const languages: Record<LanguageCode, Language> = {
       hours: 'horas',
       minute: 'minuto',
       minutes: 'minutos',
+      contextText: 'Tiempo hasta que salgamos...',
     },
   },
 };

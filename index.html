@@ -11,39 +11,40 @@
       <div id="main-display"></div>
       <canvas id="festive-canvas"></canvas>
       
+      <button id="toggle-language" type="button" title="Change language">🇺🇸</button>
       <button id="toggle-theme" type="button" title="Toggle dark/light mode">🌓</button>
       <button id="toggle-config" type="button" title="Settings">⚙️</button>
       
       <div id="config-form" class="hidden">
-        <h2>Work Schedule</h2>
+        <h2 id="work-schedule-title">Work Schedule</h2>
         
         <div class="form-group">
-          <label>Work Days:</label>
+          <label id="work-days-label">Work Days:</label>
           <div class="days-container">
-            <label><input type="checkbox" data-day="0" /> Mon</label>
-            <label><input type="checkbox" data-day="1" /> Tue</label>
-            <label><input type="checkbox" data-day="2" /> Wed</label>
-            <label><input type="checkbox" data-day="3" /> Thu</label>
-            <label><input type="checkbox" data-day="4" /> Fri</label>
-            <label><input type="checkbox" data-day="5" /> Sat</label>
-            <label><input type="checkbox" data-day="6" /> Sun</label>
+            <label><input type="checkbox" data-day="0" /> <span data-day-name="0">Mon</span></label>
+            <label><input type="checkbox" data-day="1" /> <span data-day-name="1">Tue</span></label>
+            <label><input type="checkbox" data-day="2" /> <span data-day-name="2">Wed</span></label>
+            <label><input type="checkbox" data-day="3" /> <span data-day-name="3">Thu</span></label>
+            <label><input type="checkbox" data-day="4" /> <span data-day-name="4">Fri</span></label>
+            <label><input type="checkbox" data-day="5" /> <span data-day-name="5">Sat</span></label>
+            <label><input type="checkbox" data-day="6" /> <span data-day-name="6">Sun</span></label>
           </div>
         </div>
         
         <div class="form-group">
-          <label for="start-time">Start Time:</label>
+          <label for="start-time" id="start-time-label">Start Time:</label>
           <input type="time" id="start-time" required />
         </div>
         
         <div class="form-group">
-          <label for="end-time">End Time:</label>
+          <label for="end-time" id="end-time-label">End Time:</label>
           <input type="time" id="end-time" required />
         </div>
         
         <div class="form-group">
           <label>
             <input type="checkbox" id="emoji-mode" />
-            Emoji Mode
+            <span id="emoji-mode-label">Emoji Mode</span>
           </label>
         </div>
         

@@ -3,6 +3,13 @@ import { getSchedule, saveSchedule, type WorkSchedule } from './schedule';
 import { updateDisplay } from './display';
 import { getMsUntilNextMinute } from './time-calculator';
 import { drawFestiveCanvas } from './canvas-drawing';
+import {
+  getCurrentLanguage,
+  setCurrentLanguage,
+  getLanguageStrings,
+  getNextLanguage,
+  languages,
+} from './languages';
 
 let schedule: WorkSchedule = getSchedule();
 let updateTimeoutId: number | null = null;
@@ -11,19 +18,101 @@ function updateThemeIcon(): void {
   const themeToggle = document.getElementById('toggle-theme');
   if (!themeToggle) return;
   
+  const strings = getLanguageStrings();
   const isDark = document.documentElement.classList.contains('dark-mode');
   const isLight = document.documentElement.classList.contains('light-mode');
   
   if (isDark) {
     themeToggle.textContent = '🌙';
-    themeToggle.title = 'Dark mode (click for light)';
+    themeToggle.title = strings.themeDarkTitle;
   } else if (isLight) {
     themeToggle.textContent = '☀️';
-    themeToggle.title = 'Light mode (click for system)';
+    themeToggle.title = strings.themeLightTitle;
   } else {
     themeToggle.textContent = '🌓';
-    themeToggle.title = 'System theme (click for dark)';
+    themeToggle.title = strings.themeSystemTitle;
   }
+}
+
+function updateAllUIText(): void {
+  const strings = getLanguageStrings();
+  const currentLang = getCurrentLanguage();
+  
+  // Update HTML lang attribute
+  document.documentElement.lang = currentLang;
+  
+  // Update language toggle button
+  const languageToggle = document.getElementById('toggle-language');
+  if (languageToggle) {
+    languageToggle.textContent = languages[currentLang].flag;
+    languageToggle.title = `${languages[currentLang].name} (click to change)`;
+  }
+  
+  // Update config toggle button
+  const configToggle = document.getElementById('toggle-config');
+  if (configToggle) {
+    configToggle.title = strings.settingsTitle;
+  }
+  
+  // Update config form
+  const workScheduleTitle = document.getElementById('work-schedule-title');
+  if (workScheduleTitle) {
+    workScheduleTitle.textContent = strings.workSchedule;
+  }
+  
+  const workDaysLabel = document.getElementById('work-days-label');
+  if (workDaysLabel) {
+    workDaysLabel.textContent = strings.workDays;
+  }
+  
+  // Update day names
+  strings.days.forEach((dayName, index) => {
+    const daySpan = document.querySelector(`span[data-day-name="${index}"]`);
+    if (daySpan) {
+      daySpan.textContent = dayName;
+    }
+  });
+  
+  const startTimeLabel = document.getElementById('start-time-label');
+  if (startTimeLabel) {
+    startTimeLabel.textContent = strings.startTime;
+  }
+  
+  const endTimeLabel = document.getElementById('end-time-label');
+  if (endTimeLabel) {
+    endTimeLabel.textContent = strings.endTime;
+  }
+  
+  const emojiModeLabel = document.getElementById('emoji-mode-label');
+  if (emojiModeLabel) {
+    emojiModeLabel.textContent = strings.emojiMode;
+  }
+  
+  const saveButton = document.getElementById('save-config');
+  if (saveButton) {
+    saveButton.textContent = strings.save;
+  }
+  
+  // Update theme icon titles
+  updateThemeIcon();
+  
+  // Update display (to refresh localized messages)
+  updateDisplay(schedule);
+}
+
+function initializeLanguage(): void {
+  const languageToggle = document.getElementById('toggle-language');
+  if (!languageToggle) return;
+  
+  // Set initial language
+  updateAllUIText();
+  
+  // Handle language toggle
+  languageToggle.addEventListener('click', () => {
+    const nextLang = getNextLanguage();
+    setCurrentLanguage(nextLang);
+    updateAllUIText();
+  });
 }
 
 function initializeTheme(): void {
@@ -189,6 +278,7 @@ function setupCanvasResize(): void {
 
 // Initialize app
 function init(): void {
+  initializeLanguage();
   initializeTheme();
   initializeConfigForm();
   setupCanvasResize();

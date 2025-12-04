@@ -160,6 +160,7 @@ body {
   display: none;
 }
 
+#toggle-language,
 #toggle-theme,
 #toggle-config {
   position: fixed;
@@ -174,6 +175,10 @@ body {
   z-index: 10;
   transition: background 0.2s, border-color 0.2s;
   font-family: inherit;
+}
+
+#toggle-language {
+  right: 170px;
 }
 
 #toggle-theme {
@@ -316,11 +321,16 @@ input[type="time"]:focus {
     padding: 1.5rem;
   }
   
+  #toggle-language,
   #toggle-theme,
   #toggle-config {
     top: 10px;
     padding: 8px 12px;
     font-size: 1.25rem;
+  }
+  
+  #toggle-language {
+    right: 150px;
   }
   
   #toggle-theme {

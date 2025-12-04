@@ -1,6 +1,7 @@
 import type { WorkSchedule } from './schedule';
 import { getTimeRemaining, isWorkDayToday } from './time-calculator';
 import { drawFestiveCanvas } from './canvas-drawing';
+import { getLanguageStrings } from './languages';
 
 export function updateDisplay(schedule: WorkSchedule): void {
   const displayElement = document.getElementById('main-display');
@@ -10,6 +11,7 @@ export function updateDisplay(schedule: WorkSchedule): void {
 
   const isWorkDay = isWorkDayToday(schedule);
   const timeRemaining = getTimeRemaining(schedule);
+  const strings = getLanguageStrings();
 
   // Show/hide canvas
   if (canvasElement) {
@@ -19,13 +21,13 @@ export function updateDisplay(schedule: WorkSchedule): void {
       // Not a work day - show festive
       canvasElement.style.display = 'block';
       drawFestiveCanvas(canvasElement);
-      displayElement.textContent = schedule.emojiMode ? '🎉' : 'NO WORK TODAY!';
+      displayElement.textContent = schedule.emojiMode ? '🎉' : strings.noWorkToday;
       displayElement.style.display = 'block';
     } else if (isWorkDone) {
       // Work day but work is done - show festive
       canvasElement.style.display = 'block';
       drawFestiveCanvas(canvasElement);
-      displayElement.textContent = schedule.emojiMode ? '🎉' : 'WORK DONE!';
+      displayElement.textContent = schedule.emojiMode ? '🎉' : strings.workDone;
       displayElement.style.display = 'block';
     } else {
       canvasElement.style.display = 'none';
@@ -40,11 +42,11 @@ export function updateDisplay(schedule: WorkSchedule): void {
           // Default mode: show "X hours Y minutes" format
           const parts: string[] = [];
           if (timeRemaining.hours > 0) {
-            const hourLabel = timeRemaining.hours === 1 ? 'hour' : 'hours';
+            const hourLabel = timeRemaining.hours === 1 ? strings.hour : strings.hours;
             parts.push(`${timeRemaining.hours} ${hourLabel}`);
           }
           if (timeRemaining.minutes > 0 || parts.length === 0) {
-            const minuteLabel = timeRemaining.minutes === 1 ? 'minute' : 'minutes';
+            const minuteLabel = timeRemaining.minutes === 1 ? strings.minute : strings.minutes;
             parts.push(`${timeRemaining.minutes} ${minuteLabel}`);
           }
           displayElement.textContent = parts.join(' ');

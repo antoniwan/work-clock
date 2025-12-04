@@ -93,3 +93,4 @@ function drawStar(
   ctx.closePath();
 }
 
+

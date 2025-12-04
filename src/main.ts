@@ -1,4 +1,5 @@
 import './style.css';
+import { inject } from '@vercel/analytics';
 import { getSchedule, saveSchedule, type WorkSchedule } from './schedule';
 import { updateDisplay } from './display';
 import { getMsUntilNextMinute } from './time-calculator';
@@ -17,6 +18,9 @@ import {
   applyTheme,
   getCurrentTheme,
 } from './dom-utils';
+
+// Initialize Vercel Analytics
+inject();
 
 let schedule: WorkSchedule = getSchedule();
 let updateTimeoutId: number | null = null;

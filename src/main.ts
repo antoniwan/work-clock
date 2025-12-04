@@ -7,6 +7,86 @@ import { drawFestiveCanvas } from './canvas-drawing';
 let schedule: WorkSchedule = getSchedule();
 let updateTimeoutId: number | null = null;
 
+function updateThemeIcon(): void {
+  const themeToggle = document.getElementById('toggle-theme');
+  if (!themeToggle) return;
+  
+  const isDark = document.documentElement.classList.contains('dark-mode');
+  const isLight = document.documentElement.classList.contains('light-mode');
+  
+  if (isDark) {
+    themeToggle.textContent = '🌙';
+    themeToggle.title = 'Dark mode (click for light)';
+  } else if (isLight) {
+    themeToggle.textContent = '☀️';
+    themeToggle.title = 'Light mode (click for system)';
+  } else {
+    themeToggle.textContent = '🌓';
+    themeToggle.title = 'System theme (click for dark)';
+  }
+}
+
+function initializeTheme(): void {
+  const themeToggle = document.getElementById('toggle-theme');
+  if (!themeToggle) return;
+
+  // Initialize theme from stored preference or system preference
+  const storedTheme = schedule.darkMode;
+  if (storedTheme === true) {
+    document.documentElement.classList.add('dark-mode');
+  } else if (storedTheme === false) {
+    document.documentElement.classList.add('light-mode');
+  } else {
+    // Use system preference
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (prefersDark) {
+      document.documentElement.classList.add('dark-mode');
+    }
+  }
+
+  // Update icon based on initial state
+  updateThemeIcon();
+
+  // Listen for system theme changes (only if using system preference)
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (schedule.darkMode === undefined) {
+      document.documentElement.classList.remove('dark-mode', 'light-mode');
+      if (e.matches) {
+        document.documentElement.classList.add('dark-mode');
+      }
+      updateThemeIcon();
+    }
+  });
+
+  // Toggle theme on button click
+  themeToggle.addEventListener('click', () => {
+    const isDark = document.documentElement.classList.contains('dark-mode');
+    const isLight = document.documentElement.classList.contains('light-mode');
+    
+    document.documentElement.classList.remove('dark-mode', 'light-mode');
+    
+    if (isDark) {
+      // Switch to light mode
+      document.documentElement.classList.add('light-mode');
+      schedule.darkMode = false;
+    } else if (isLight) {
+      // Switch to system preference
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (prefersDark) {
+        document.documentElement.classList.add('dark-mode');
+      }
+      schedule.darkMode = undefined;
+    } else {
+      // Currently using system, switch to dark
+      document.documentElement.classList.add('dark-mode');
+      schedule.darkMode = true;
+    }
+    
+    saveSchedule(schedule);
+    updateThemeIcon();
+  });
+}
+
 function initializeConfigForm(): void {
   const toggleButton = document.getElementById('toggle-config');
   const configForm = document.getElementById('config-form');
@@ -109,6 +189,7 @@ function setupCanvasResize(): void {
 
 // Initialize app
 function init(): void {
+  initializeTheme();
   initializeConfigForm();
   setupCanvasResize();
   updateDisplay(schedule);

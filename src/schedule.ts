@@ -3,6 +3,7 @@ export interface WorkSchedule {
   startTime: string; // "HH:MM" format
   endTime: string; // "HH:MM" format
   emojiMode?: boolean; // Optional emoji mode preference
+  darkMode?: boolean; // Optional dark mode preference (null = system, true = dark, false = light)
 }
 
 const STORAGE_KEY = 'work-clock-schedule';

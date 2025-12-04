@@ -19,13 +19,13 @@ export function updateDisplay(schedule: WorkSchedule): void {
       // Not a work day - show festive
       canvasElement.style.display = 'block';
       drawFestiveCanvas(canvasElement);
-      displayElement.textContent = schedule.emojiMode ? '🎉 NO WORK TODAY! 🎉' : 'NO WORK TODAY!';
+      displayElement.textContent = schedule.emojiMode ? '🎉' : 'NO WORK TODAY!';
       displayElement.style.display = 'block';
     } else if (isWorkDone) {
       // Work day but work is done - show festive
       canvasElement.style.display = 'block';
       drawFestiveCanvas(canvasElement);
-      displayElement.textContent = schedule.emojiMode ? '🎉 WORK DONE! 🎉' : 'WORK DONE!';
+      displayElement.textContent = schedule.emojiMode ? '🎉' : 'WORK DONE!';
       displayElement.style.display = 'block';
     } else {
       canvasElement.style.display = 'none';
@@ -34,37 +34,24 @@ export function updateDisplay(schedule: WorkSchedule): void {
       // Show countdown
       if (timeRemaining) {
         if (schedule.emojiMode) {
-          if (timeRemaining.hours === 0 && timeRemaining.minutes === 0) {
-            displayElement.textContent = '🎉 Done! 🎉';
-          } else {
-            const parts: string[] = [];
-            if (timeRemaining.hours > 0) {
-              parts.push(`${timeRemaining.hours}${getEmojiHours(timeRemaining.hours)}`);
-            }
-            if (timeRemaining.minutes > 0 || parts.length === 0) {
-              parts.push(`${timeRemaining.minutes}${getEmojiMinutes(timeRemaining.minutes)}`);
-            }
-            displayElement.textContent = `⏰ ${parts.join(' ')}`;
-          }
+          // Emoji mode: show busy emoji when working
+          displayElement.textContent = '💼';
         } else {
-          const hoursStr = timeRemaining.hours.toString().padStart(2, '0');
-          const minutesStr = timeRemaining.minutes.toString().padStart(2, '0');
-          displayElement.textContent = `${hoursStr}:${minutesStr}`;
+          // Default mode: show "X hours Y minutes" format
+          const parts: string[] = [];
+          if (timeRemaining.hours > 0) {
+            const hourLabel = timeRemaining.hours === 1 ? 'hour' : 'hours';
+            parts.push(`${timeRemaining.hours} ${hourLabel}`);
+          }
+          if (timeRemaining.minutes > 0 || parts.length === 0) {
+            const minuteLabel = timeRemaining.minutes === 1 ? 'minute' : 'minutes';
+            parts.push(`${timeRemaining.minutes} ${minuteLabel}`);
+          }
+          displayElement.textContent = parts.join(' ');
         }
       }
     }
   }
 }
 
-function getEmojiHours(hours: number): string {
-  if (hours === 0) return '';
-  if (hours === 1) return ' hour';
-  return ' hours';
-}
-
-function getEmojiMinutes(minutes: number): string {
-  if (minutes === 0) return '';
-  if (minutes === 1) return ' min';
-  return ' mins';
-}
 

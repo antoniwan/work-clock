@@ -1,16 +1,116 @@
 :root {
-  font-family: system-ui, -apple-system, sans-serif;
-  line-height: 1.5;
+  /* Simple, legible font - serif for book-like feel */
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.6;
   font-weight: 400;
   
-  color-scheme: dark;
-  color: #ffffff;
-  background-color: #000000;
+  /* Default: black on white (book-like) */
+  color-scheme: light dark;
+  color: #1a1a1a;
+  background-color: #ffffff;
   
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark mode support - system preference */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light-mode) {
+    color: #e0e0e0;
+    background-color: #1a1a1a;
+  }
+}
+
+/* Manual light mode override */
+.light-mode {
+  color: #1a1a1a;
+  background-color: #ffffff;
+}
+
+/* Manual dark mode override */
+.dark-mode {
+  color: #e0e0e0;
+  background-color: #1a1a1a;
+}
+
+.light-mode #toggle-config {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.light-mode #toggle-config:hover {
+  background: rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.light-mode #config-form {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.light-mode input[type="time"] {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.light-mode input[type="time"]:focus {
+  outline-color: rgba(0, 0, 0, 0.4);
+  border-color: rgba(0, 0, 0, 0.4);
+}
+
+.light-mode #save-config {
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+.light-mode #save-config:hover {
+  background: #333333;
+}
+
+.light-mode #save-config:active {
+  background: #000000;
+}
+
+.dark-mode #toggle-config {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.dark-mode #toggle-config:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.dark-mode #config-form {
+  background: #2a2a2a;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode input[type="time"] {
+  background: #1a1a1a;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.dark-mode input[type="time"]:focus {
+  outline-color: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.dark-mode #save-config {
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+.dark-mode #save-config:hover {
+  background: #e0e0e0;
+}
+
+.dark-mode #save-config:active {
+  background: #cccccc;
 }
 
 * {
@@ -39,13 +139,15 @@ body {
 }
 
 #main-display {
-  font-size: 6rem;
-  font-weight: 700;
+  font-size: clamp(2.5rem, 8vw, 8rem);
+  font-weight: 400;
   text-align: center;
   z-index: 2;
-  color: #00ff00;
-  text-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+  color: inherit;
   user-select: none;
+  letter-spacing: -0.02em;
+  max-width: 90vw;
+  padding: 2rem;
 }
 
 #festive-canvas {
@@ -58,23 +160,34 @@ body {
   display: none;
 }
 
+#toggle-theme,
 #toggle-config {
   position: fixed;
   top: 20px;
-  right: 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  color: #ffffff;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: inherit;
   font-size: 1.5rem;
   padding: 10px 15px;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   z-index: 10;
-  transition: background 0.2s;
+  transition: background 0.2s, border-color 0.2s;
+  font-family: inherit;
 }
 
+#toggle-theme {
+  right: 95px;
+}
+
+#toggle-config {
+  right: 20px;
+}
+
+#toggle-theme:hover,
 #toggle-config:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.2);
 }
 
 #config-form {
@@ -82,14 +195,15 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #1a1a1a;
-  border: 2px solid #00ff00;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
   padding: 2rem;
-  border-radius: 12px;
+  border-radius: 8px;
   z-index: 20;
   min-width: 300px;
   max-width: 90vw;
-  box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  font-family: inherit;
 }
 
 #config-form.hidden {
@@ -98,8 +212,10 @@ body {
 
 #config-form h2 {
   margin-top: 0;
-  color: #00ff00;
+  color: inherit;
   text-align: center;
+  font-weight: 600;
+  font-size: 1.5rem;
 }
 
 .form-group {
@@ -109,7 +225,7 @@ body {
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #ffffff;
+  color: inherit;
   font-weight: 500;
 }
 
@@ -135,16 +251,18 @@ body {
 input[type="time"] {
   width: 100%;
   padding: 0.75rem;
-  background: #000000;
-  border: 1px solid #00ff00;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 4px;
-  color: #ffffff;
+  color: inherit;
   font-size: 1rem;
+  font-family: inherit;
 }
 
 input[type="time"]:focus {
-  outline: 2px solid #00ff00;
+  outline: 2px solid rgba(0, 0, 0, 0.4);
   outline-offset: 2px;
+  border-color: rgba(0, 0, 0, 0.4);
 }
 
 #emoji-mode {
@@ -156,36 +274,60 @@ input[type="time"]:focus {
 #save-config {
   width: 100%;
   padding: 0.75rem;
-  background: #00ff00;
-  color: #000000;
+  background: #1a1a1a;
+  color: #ffffff;
   border: none;
   border-radius: 4px;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;
+  font-family: inherit;
 }
 
 #save-config:hover {
-  background: #00cc00;
+  background: #333333;
 }
 
 #save-config:active {
-  background: #009900;
+  background: #000000;
 }
 
-@media (max-width: 768px) {
+/* Responsive sizing - comfortable on all screens */
+@media (min-width: 1200px) {
   #main-display {
-    font-size: 4rem;
+    font-size: 8rem;
   }
 }
 
-@media (max-width: 480px) {
+@media (min-width: 768px) and (max-width: 1199px) {
   #main-display {
-    font-size: 3rem;
+    font-size: 6rem;
+  }
+}
+
+@media (max-width: 767px) {
+  #main-display {
+    font-size: clamp(2rem, 10vw, 4rem);
+    padding: 1.5rem;
   }
   
   #config-form {
     padding: 1.5rem;
+  }
+  
+  #toggle-theme,
+  #toggle-config {
+    top: 10px;
+    padding: 8px 12px;
+    font-size: 1.25rem;
+  }
+  
+  #toggle-theme {
+    right: 75px;
+  }
+  
+  #toggle-config {
+    right: 10px;
   }
 }
